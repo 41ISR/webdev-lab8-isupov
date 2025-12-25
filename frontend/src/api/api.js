@@ -1,111 +1,122 @@
-const API_URL = 'https://kitek.ktkv.dev/marketplace/'
+const API_BASE_URL = 'https://kitek.ktkv.dev/marketplace';
 
-async function handleResponse(response) {
-  let data = null
-  try {
-    data = await response.json()
-  } catch {
-    data = null
+class ApiClient {
+  constructor() {
+    this.baseURL = API_BASE_URL;
   }
 
-  if (!response.ok) {
-    const message = data?.error || data?.message || 'Request failed'
-    throw new Error(message)
+  getAuthToken() {
+    return localStorage.getItem('authToken');
   }
 
-  return data
-}
+  setAuthToken(token) {
+    localStorage.setItem('authToken', token);
+  }
 
-const authHeader = (token) =>
-  token
-    ? {
-        Authorization: `Bearer ${token}`,
+  removeAuthToken() {
+    localStorage.removeItem('authToken');
+  }
+
+  async request(endpoint, options = {}) {
+    const url = `${this.baseURL}${endpoint}`;
+    const token = this.getAuthToken();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      ...options,
+    };
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    try {
+      const response = await fetch(url, config);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
       }
-    : {}
 
-export const api = {
-  register: async ({ username, password, email }) => {
-    const res = await fetch(`${API_URL}/auth/register`, {
+      return data;
+    } catch (error) {
+      console.error('API request failed:', error);
+      throw error;
+    }
+  }
+
+  async register(userData) {
+    const response = await this.request('/api/auth/register', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password, email }),
-    })
-    return handleResponse(res)
-  },
+      body: JSON.stringify(userData),
+    });
+    
+    if (response.token) {
+      this.setAuthToken(response.token);
+    }
+    
+    return response;
+  }
 
-  login: async ({ username, password }) => {
-    const res = await fetch(`${API_URL}/auth/login`, {
+  async login(credentials) {
+    const response = await this.request('/api/auth/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    })
-    return handleResponse(res)
-  },
+      body: JSON.stringify(credentials),
+    });
+    
+    if (response.token) {
+      this.setAuthToken(response.token);
+    }
+    
+    return response;
+  }
 
-  me: async (token) => {
-    const res = await fetch(`${API_URL}/auth/me`, {
-      headers: {
-        ...authHeader(token),
-      },
-    })
-    return handleResponse(res)
-  },
+  async getCurrentUser() {
+    return this.request('/api/auth/me');
+  }
 
-  getItems: async () => {
-    const res = await fetch(`${API_URL}/items`)
-    return handleResponse(res)
-  },
+  logout() {
+    this.removeAuthToken();
+  }
 
-  createItem: async (itemData, token) => {
-    const res = await fetch(`${API_URL}/items`, {
+  async getItems() {
+    return this.request('/api/items');
+  }
+
+  async createItem(itemData) {
+    return this.request('/api/items', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeader(token),
-      },
       body: JSON.stringify(itemData),
-    })
-    return handleResponse(res)
-  },
+    });
+  }
 
-  deleteItem: async (id, token) => {
-    const res = await fetch(`${API_URL}/items/${id}`, {
+  async deleteItem(itemId) {
+    return this.request(`/api/items/${itemId}`, {
       method: 'DELETE',
-      headers: {
-        ...authHeader(token),
-      },
-    })
-    return handleResponse(res)
-  },
+    });
+  }
 
-  getItemBids: async (itemId) => {
-    const res = await fetch(`${API_URL}/items/${itemId}/bids`)
-    return handleResponse(res)
-  },
+  async getItemBids(itemId) {
+    return this.request(`/api/items/${itemId}/bids`);
+  }
 
-  createBid: async (itemId, bidData, token) => {
-    const res = await fetch(`${API_URL}/items/${itemId}/bids`, {
+  async createBid(itemId, bidData) {
+    return this.request(`/api/items/${itemId}/bids`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeader(token),
-      },
       body: JSON.stringify(bidData),
-    })
-    return handleResponse(res)
-  },
+    });
+  }
 
-  getMyBids: async (token) => {
-    const res = await fetch(`${API_URL}/bids/my`, {
-      headers: {
-        ...authHeader(token),
-      },
-    })
-    return handleResponse(res)
-  },
+  async getMyBids() {
+    return this.request('/api/bids/my');
+  }
 
-  getStats: async () => {
-    const res = await fetch(`${API_URL}/stats`)
-    return handleResponse(res)
-  },
+  async getStats() {
+    return this.request('/api/stats');
+  }
 }
+
+export const apiClient = new ApiClient();
