@@ -1,0 +1,20 @@
+meta {
+  name: my
+  type: http
+  seq: 10
+}
+
+get {
+  url: https://kitek.ktkv.dev/marketplace/api/bids/my
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3NjY2NjEzNTY0ODMsInVzZXJuYW1lIjoidGVzdHVzZXIxMjMiLCJpYXQiOjE3NjY2NjEzNzAsImV4cCI6MTc2Njc0Nzc3MH0.Cfg2GX-cZtj2HRuJeXhQBXVirN6e6a7tW8iqg6DVArg
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

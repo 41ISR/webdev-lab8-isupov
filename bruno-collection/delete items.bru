@@ -1,0 +1,24 @@
+meta {
+  name: delete items
+  type: http
+  seq: 8
+}
+
+delete {
+  url: https://kitek.ktkv.dev/marketplace/api/items/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 1766661582485
+}
+
+headers {
+  Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3NjY2NjEzNTY0ODMsInVzZXJuYW1lIjoidGVzdHVzZXIxMjMiLCJpYXQiOjE3NjY2NjEzNzAsImV4cCI6MTc2Njc0Nzc3MH0.Cfg2GX-cZtj2HRuJeXhQBXVirN6e6a7tW8iqg6DVArg
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
