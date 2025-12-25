@@ -1,0 +1,36 @@
+meta {
+  name: Get My Bids
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/bids/my
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response is array", function() {
+    expect(res.getBody()).to.be.an('array');
+  });
+  
+  test("Bids have required fields", function() {
+    const bids = res.getBody();
+    if (bids.length > 0) {
+      const bid = bids[0];
+      expect(bid.id).to.be.a('number');
+      expect(bid.amount).to.be.a('number');
+      expect(bid.itemTitle).to.be.a('string');
+      expect(bid.isWinning).to.be.a('boolean');
+    }
+  });
+}

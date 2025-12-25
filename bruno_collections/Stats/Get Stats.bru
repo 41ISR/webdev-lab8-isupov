@@ -1,0 +1,25 @@
+meta {
+  name: Get Stats
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/stats
+  body: none
+  auth: none
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response has stats data", function() {
+    expect(res.getBody().totalItems).to.be.a('number');
+    expect(res.getBody().totalUsers).to.be.a('number');
+    expect(res.getBody().totalBids).to.be.a('number');
+    expect(res.getBody().activeItems).to.be.a('number');
+    expect(res.getBody().averageItemPrice).to.be.a('number');
+  });
+}

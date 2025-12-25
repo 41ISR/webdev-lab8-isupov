@@ -1,0 +1,32 @@
+meta {
+  name: Create Bid
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/items/{{itemId}}/bids
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "amount": 1500
+  }
+}
+
+tests {
+  test("Status is 200 or 201", function() {
+    expect([200, 201]).to.include(res.getStatus());
+  });
+  
+  test("Response has bid data", function() {
+    expect(res.getBody().id).to.be.a('number');
+    expect(res.getBody().amount).to.equal(1500);
+  });
+}

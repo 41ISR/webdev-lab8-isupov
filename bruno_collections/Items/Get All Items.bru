@@ -1,0 +1,32 @@
+meta {
+  name: Get All Items
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/items
+  body: none
+  auth: none
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response is array", function() {
+    expect(res.getBody()).to.be.an('array');
+  });
+  
+  test("Items have required fields", function() {
+    const items = res.getBody();
+    if (items.length > 0) {
+      const item = items[0];
+      expect(item.id).to.be.a('number');
+      expect(item.title).to.be.a('string');
+      expect(item.price).to.be.a('number');
+      expect(item.username).to.be.a('string');
+    }
+  });
+}

@@ -1,0 +1,42 @@
+meta {
+  name: Create Item
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/items
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "title": "Test Item",
+    "description": "This is a test item created via Bruno API collection",
+    "price": 1000,
+    "imageUrl": "https://via.placeholder.com/300x200"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200 || res.getStatus() === 201) {
+    bru.setEnvVar("itemId", res.getBody().id);
+  }
+}
+
+tests {
+  test("Status is 200 or 201", function() {
+    expect([200, 201]).to.include(res.getStatus());
+  });
+  
+  test("Response has item data", function() {
+    expect(res.getBody().id).to.be.a('number');
+    expect(res.getBody().title).to.equal('Test Item');
+    expect(res.getBody().price).to.equal(1000);
+  });
+}

@@ -1,0 +1,26 @@
+meta {
+  name: Get Current User
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/auth/me
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response has user data", function() {
+    expect(res.getBody().username).to.be.a('string');
+    expect(res.getBody().id).to.be.a('number');
+  });
+}

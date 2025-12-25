@@ -1,0 +1,21 @@
+meta {
+  name: Get Item Bids
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/items/{{itemId}}/bids
+  body: none
+  auth: none
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response is array", function() {
+    expect(res.getBody()).to.be.an('array');
+  });
+}
