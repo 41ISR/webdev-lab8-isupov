@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://kitek.ktkv.dev/marketplace';
+const API_BASE_URL = 'http://147.45.213.18:6789';
 
 class ApiClient {
   constructor() {
