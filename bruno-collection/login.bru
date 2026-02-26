@@ -1,0 +1,23 @@
+meta {
+  name: login
+  type: http
+  seq: 3
+}
+
+post {
+  url: https://kitek.ktkv.dev/marketplace/api/auth/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "testuser123",
+    "password": "password12312312"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
